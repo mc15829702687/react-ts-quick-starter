@@ -1,0 +1,14 @@
+html {
+  // 浏览器默认字体大小是 16px，16px * 62.5% = 10px，也就是 1rem = 10px
+  // em: 相对于父体高度
+  // rem: 相对于 html 的字体大小，r 是 root 的意思
+  font-size: 62.5%;
+}
+
+// vh === viewport height
+html,
+body,
+#root,
+.App {
+  min-height: 100vh;
+}
