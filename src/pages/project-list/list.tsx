@@ -20,7 +20,6 @@ export interface Project {
 interface ListProps extends TableProps<Project> {
   users: User[];
   refresh?: () => void;
-  projectButton: JSX.Element;
 }
 
 const ListScreen = ({ users, ...props }: ListProps) => {
@@ -68,7 +67,7 @@ const ListScreen = ({ users, ...props }: ListProps) => {
               <Dropdown
                 overlay={
                   <Menu>
-                    <Menu.Item>{props.projectButton}</Menu.Item>
+                    <Menu.Item>编辑</Menu.Item>
                   </Menu>
                 }
               >
