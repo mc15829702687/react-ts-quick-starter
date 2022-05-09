@@ -13,8 +13,14 @@ import { Row } from 'src/components/lib';
 
 import { useProjectsSearchParams } from './util';
 
-const ProjectList = (props: { projectButton: JSX.Element }) => {
+import { ButtonNoPadding } from 'src/components/lib';
+import { useDispatch } from 'react-redux';
+import { projectListActions } from './project-list.slice';
+
+const ProjectList = () => {
   const [param, setParam] = useProjectsSearchParams();
+
+  const dispatch = useDispatch();
 
   // 通过封装的 useAsync 来 获取 users 和 list
   const { error, isLoading, data: list, retry } = useProjects(useDebounce(param, 200));
@@ -24,16 +30,12 @@ const ProjectList = (props: { projectButton: JSX.Element }) => {
     <Container>
       <Row between>
         <SearchPannel users={users || []} param={param} setParam={setParam} />
-        {props.projectButton}
+        <ButtonNoPadding type='link' onClick={() => dispatch(projectListActions.openProjectModal())}>
+          创建项目
+        </ButtonNoPadding>
       </Row>
       {error ? <Typography.Text type='danger'>{error.message}</Typography.Text> : null}
-      <ListScreen
-        refresh={retry}
-        loading={isLoading}
-        dataSource={list || []}
-        users={users || []}
-        projectButton={props.projectButton}
-      />
+      <ListScreen refresh={retry} loading={isLoading} dataSource={list || []} users={users || []} />
     </Container>
   );
 };

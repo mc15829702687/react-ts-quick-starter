@@ -8,7 +8,7 @@ import { UserSelect } from 'src/components/user-select';
 export interface User {
   id: number;
   name: string;
-  token: string;
+  token?: string;
 }
 
 interface SearchPannelProps {
