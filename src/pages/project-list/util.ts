@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { useUrlQueryParams } from 'src/utils/url';
+import { useSetUrlSearchParam, useUrlQueryParams } from 'src/utils/url';
+import { useProject } from 'src/utils/projects';
 
 export const useProjectsSearchParams = () => {
   const [param, setParam] = useUrlQueryParams(['name', 'personId']);
@@ -7,15 +8,25 @@ export const useProjectsSearchParams = () => {
 };
 
 export const useProjectModal = () => {
-  const [{ projectCreate }, setProjectModal] = useUrlQueryParams(['projectCreate']);
+  const [{ projectCreate }, setProjectCreate] = useUrlQueryParams(['projectCreate']);
+  const [{ editingProjectId }, setEditingProjectId] = useUrlQueryParams(['editingProjectId']);
+  const setUrlParams = useSetUrlSearchParam();
 
-  const open = () => setProjectModal({ projectCreate: true });
-  const close = () => setProjectModal({ projectCreate: undefined });
+  const { data: editingProject, isLoading } = useProject(Number(editingProjectId));
+
+  const open = () => setProjectCreate({ projectCreate: true });
+  const close = () => {
+    setUrlParams({ projectCreate: '', editingProjectId: '' });
+  };
+  const startEdit = (id: number) => setEditingProjectId({ editingProjectId: id });
 
   // 返回三种一下的自定义组件状态用 tuple，三种以上用对象形式返回
   return {
-    projectModalOpen: projectCreate === 'true',
+    projectModalOpen: projectCreate === 'true' || Boolean(editingProjectId),
     open,
     close,
+    startEdit,
+    editingProject,
+    isLoading,
   };
 };

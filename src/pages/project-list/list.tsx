@@ -1,12 +1,13 @@
 import React from 'react';
-import { Table, TableProps, Dropdown, Menu, Button } from 'antd';
+import { Table, TableProps, Dropdown, Menu, Button, Modal } from 'antd';
 
 import dayjs from 'dayjs';
 
 import { User } from './SearchPannel';
 import { Link } from 'react-router-dom';
 import { Pin } from 'src/components/pin';
-import { useEditProjects } from 'src/utils/projects';
+import { useDeleteProjects, useEditProjects, useProjectsQueryKey } from 'src/utils/projects';
+import { useProjectModal } from './util';
 
 export interface Project {
   id: number;
@@ -19,12 +20,11 @@ export interface Project {
 
 interface ListProps extends TableProps<Project> {
   users: User[];
-  refresh?: () => void;
 }
 
 const ListScreen = ({ users, ...props }: ListProps) => {
-  const { mutate } = useEditProjects();
-  const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin }).then(props.refresh);
+  const { mutate } = useEditProjects(useProjectsQueryKey());
+  const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin });
 
   return (
     <Table
@@ -63,22 +63,41 @@ const ListScreen = ({ users, ...props }: ListProps) => {
         {
           title: '操作',
           render: (text, project) => {
-            return (
-              <Dropdown
-                overlay={
-                  <Menu>
-                    <Menu.Item>编辑</Menu.Item>
-                  </Menu>
-                }
-              >
-                <span>...</span>
-              </Dropdown>
-            );
+            return <More project={project} />;
           },
         },
       ]}
       {...props}
     ></Table>
+  );
+};
+
+const More = ({ project }: { project: Project }) => {
+  const { startEdit } = useProjectModal();
+  const editProject = (id: number) => startEdit(id);
+  const { mutate: deleteProject } = useDeleteProjects(useProjectsQueryKey());
+  const confirmDeleteProject = (id: number) => {
+    Modal.confirm({
+      title: '确定删除这个项目吗',
+      content: '点击确定删除',
+      okText: '确定',
+      onOk() {
+        deleteProject({ id });
+      },
+    });
+  };
+
+  return (
+    <Dropdown
+      overlay={
+        <Menu>
+          <Menu.Item onClick={() => editProject(project.id)}>编辑</Menu.Item>
+          <Menu.Item onClick={() => confirmDeleteProject(project.id)}>删除</Menu.Item>
+        </Menu>
+      }
+    >
+      <span>...</span>
+    </Dropdown>
   );
 };
 

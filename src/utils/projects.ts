@@ -1,38 +1,55 @@
-import { useCallback, useEffect } from 'react';
+import { QueryKey, useMutation, useQuery, useQueryClient } from 'react-query';
+
 import { useHttp } from 'src/utils/http';
-import { useAsync } from 'src/utils/use-async';
 import { Project } from 'src/pages/project-list/list';
 
 import { cleanObject } from 'src/utils';
+import { useProjectsSearchParams } from 'src/pages/project-list/util';
+import { useAddConfig, useDeleteConfig, useEditConfig } from './use-optimistic-options';
+
+export const useProjectsQueryKey = () => {
+  const [param] = useProjectsSearchParams();
+  return ['projects', param];
+};
 
 export const useProjects = (param?: Partial<Project>) => {
-  // 使用自定义 hook 来获取 loading，error，网络请求
-  const { run, ...result } = useAsync<Project[]>();
-
   // 封装的 fetch 函数
   const client = useHttp();
 
-  const fetchProjects = useCallback(() => client('projects', { data: cleanObject(param || {}) }), [client, param]);
-
-  useEffect(() => {
-    run(fetchProjects(), {
-      retry: fetchProjects,
-    });
-  }, [param, run, fetchProjects]);
-
-  return result;
+  return useQuery<Project[]>(['projects', param], () => client('projects', { data: cleanObject(param || {}) }));
 };
 
-export const useEditProjects = () => {
-  const { run, ...asyncResult } = useAsync();
+export const useEditProjects = (queryKey: QueryKey) => {
   const client = useHttp();
 
-  const mutate = (params: Partial<Project>) => {
-    return run(client(`projects/${params.id}`, { data: params, method: 'PATCH' }));
-  };
+  return useMutation(
+    (params: Partial<Project>) => client(`projects/${params.id}`, { data: params, method: 'PATCH' }),
+    useEditConfig(queryKey),
+  );
+};
 
-  return {
-    mutate,
-    ...asyncResult,
-  };
+export const useAddProjects = (queryKey: QueryKey) => {
+  const client = useHttp();
+
+  return useMutation(
+    (params: Partial<Project>) => client(`projects`, { data: params, method: 'POST' }),
+    useAddConfig(queryKey),
+  );
+};
+
+export const useDeleteProjects = (queryKey: QueryKey) => {
+  const client = useHttp();
+
+  return useMutation(
+    ({ id }: { id: number }) => client(`projects/${id}`, { method: 'DELETE' }),
+    useDeleteConfig(queryKey),
+  );
+};
+
+// enabled 为 false 时，不会自动刷新接口
+export const useProject = (id?: number) => {
+  const client = useHttp();
+  return useQuery<Project>(['project', id], () => client(`projects/${id}`), {
+    enabled: !!id,
+  });
 };

@@ -1,26 +1,32 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { URLSearchParamsInit, useSearchParams } from 'react-router-dom';
-import { cleanObject } from '.';
+import { cleanObject, subset } from '.';
 
 export const useUrlQueryParams = <K extends string>(keys: K[]) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const setSearchParams = useSetUrlSearchParam();
+  const [stateKeys] = useState(keys);
 
   // https://codesandbox.io/s/cranky-gould-hs6ct2?file=/src/App.js
   return [
     useMemo(
-      () =>
-        keys.reduce((prev, key) => {
-          return { ...prev, [key]: searchParams.get(key) || '' };
-        }, {} as { [key in K]: string }),
+      () => subset(Object.fromEntries(searchParams), stateKeys) as { [key in K]: string },
       // eslint-disable-next-line
-      [searchParams],
+      [searchParams, stateKeys],
     ),
     (params: Partial<{ [key in K]: unknown }>) => {
-      // Iterator
-      const o = cleanObject({ ...Object.fromEntries(searchParams), ...params }) as URLSearchParamsInit;
-      return setSearchParams(o);
+      setSearchParams(params);
     },
   ] as const;
+};
+
+export const useSetUrlSearchParam = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  return (params: { [key in string]: unknown }) => {
+    // Iterator
+    const o = cleanObject({ ...Object.fromEntries(searchParams), ...params }) as URLSearchParamsInit;
+    return setSearchParams(o);
+  };
 };
 
 // demo

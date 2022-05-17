@@ -1,6 +1,7 @@
 import React, { ReactNode, useContext } from 'react';
-
 import { DevTools } from 'jira-dev-tool';
+import { useQueryClient } from 'react-query';
+
 import * as auth from 'src/auth-provide';
 import { FullPageLoading, FullPageError } from 'src/components/lib';
 import { User } from 'src/pages/project-list/SearchPannel';
@@ -36,11 +37,16 @@ const bootstrapUser = async () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { isIdle, isLoading, isError, run, error, data: user, setData: setUser } = useAsync<User | null>();
+  const queryClent = useQueryClient();
 
   // point free
   const login = (form: AuthForm) => auth.login(form).then(setUser);
   const register = (form: AuthForm) => auth.register(form).then(setUser);
-  const logout = () => auth.logout().then(() => setUser(null));
+  const logout = () =>
+    auth.logout().then(() => {
+      setUser(null);
+      queryClent.clear();
+    });
 
   useMount(() => {
     run(bootstrapUser());
