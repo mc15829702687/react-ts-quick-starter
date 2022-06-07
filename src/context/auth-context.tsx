@@ -4,7 +4,7 @@ import { useQueryClient } from 'react-query';
 
 import * as auth from 'src/auth-provide';
 import { FullPageLoading, FullPageError } from 'src/components/lib';
-import { User } from 'src/pages/project-list/SearchPannel';
+import { User } from 'src/types/user';
 import { http } from 'src/utils/http';
 import { useAsync } from 'src/utils/use-async';
 import { useMount } from 'src/utils';

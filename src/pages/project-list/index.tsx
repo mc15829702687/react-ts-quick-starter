@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import styled from '@emotion/styled';
-import { Typography, Button } from 'antd';
 
 import SearchPannel from './SearchPannel';
 import ListScreen from './list';
@@ -38,6 +37,7 @@ const ProjectList = () => {
 // ProjectList.whyDidYouRender = true;
 
 const Container = styled.div`
+  width: 100%;
   padding: 3.2rem;
 `;
 

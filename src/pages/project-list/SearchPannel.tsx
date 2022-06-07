@@ -1,15 +1,10 @@
 import React from 'react';
 import { Form, Input, Select } from 'antd';
 import { jsx } from '@emotion/react';
-import { Project } from './list';
+import { Project } from '../../types/project';
 
 import { UserSelect } from 'src/components/user-select';
-
-export interface User {
-  id: number;
-  name: string;
-  token: string;
-}
+import { User } from '../../types/user';
 
 interface SearchPannelProps {
   users: User[];

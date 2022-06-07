@@ -1,7 +1,7 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { useHttp } from 'src/utils/http';
-import { Project } from 'src/pages/project-list/list';
+import { Project } from 'src/types/project';
 
 import { cleanObject } from 'src/utils';
 import { useProjectsSearchParams } from 'src/pages/project-list/util';

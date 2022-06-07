@@ -11,7 +11,7 @@ import { resetRoute, useDocumentTitle } from 'src/utils';
 import { Test } from './test';
 
 import { ReactComponent as SoftwareLogo } from 'src/assets/software-logo.svg';
-import { ProjectsScreen } from './pages/projects';
+import { ProjectsScreen } from './pages/project';
 import { ProjectsModal } from 'src/pages/project-list/ProjectsModal';
 import { ProjectPopover } from './components/project-popover';
 import { Row } from './components/lib';
@@ -103,4 +103,7 @@ const Header = styled(Row)`
 const HeaderLeft = styled(Row)``;
 const HeaderRight = styled.div``;
 
-const Main = styled.main``;
+const Main = styled.main`
+  display: flex;
+  overflow: hidden;
+`;

@@ -1,7 +1,7 @@
 /**
  * 该工具库主要作用是用读写在 localstorage 中的登录 token
  */
-import { User } from './pages/project-list/SearchPannel';
+import { User } from './types/user';
 
 // 在真实环境中，如果使用 firebase 这种第三方 auth 服务的话，本文件不需要开发者开发
 const localStorageKey = '__auth_provide_token__';

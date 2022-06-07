@@ -3,7 +3,7 @@ import { Spin, Typography, Button } from 'antd';
 import styled from '@emotion/styled';
 
 export const Row = styled.div<{
-  gap?: number | undefined;
+  gap?: number | boolean | undefined;
   between?: boolean;
   marginBottom?: number;
 }>`
